@@ -1,23 +1,41 @@
 const calcScreen = document.querySelector('.screen');
-calcScreen.addEventListener('keydown',checkValidInput);
+calcScreen.addEventListener('keydown',checkValidInput); //check for clicks anywhere on the body
 
 function checkValidInput(e){
 	if(e.ctrlKey||e.altKey||typeof e.key!=='string'||e.key.length!==1) //if special buttons, let it pass
         return;
 
-    if(!(/[\d\+\u00D7\u00F7\u2212]/.test(e.key)))
+    if(!(/[\d\+\u2212\u00D7\u00F7]/.test(e.key)))
         e.preventDefault(); //filter out invalid input
 }
 
 const buttons=document.querySelector('.buttons');
-buttons.addEventListener('click',buttonPressed);
+buttons.addEventListener('click',e=>buttonPressed(e.target));
 
-function buttonPressed(e){
-    console.log(e.target.value);
-    if(e.target.id=="backspace")
-        calcScreen.value=calcScreen.value.substr(0,calcScreen.value.length-1);
-    else
-        calcScreen.value+=e.target.value;
+function buttonPressed(button){
+    // console.log(e.target.value);
+    // alert(button.id)
+    switch(button.id){
+        case 'backspace': calcScreen.value=calcScreen.value.substr(0,calcScreen.value.length-1);
+            break;
+
+        case "": break; //remove clicks on calc body
+
+        case 'minus': calcScreen.value+='\u2212';
+            break;
+
+        case 'into': calcScreen.value+='\u00D7';
+            break;
+
+        case 'divide': calcScreen.value+='\u00F7';
+            break;
+
+        case 'equals': calculate();
+            break;
+
+        default: calcScreen.value+=button.value;
+    }
+        
 }
 // function add(a,b) {
 // 	return a+b;
