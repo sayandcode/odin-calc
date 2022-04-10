@@ -13,8 +13,6 @@ const buttons=document.querySelector('.buttons');
 buttons.addEventListener('click',e=>buttonPressed(e.target));
 
 function buttonPressed(button){
-    // console.log(e.target.value);
-    // alert(button.id)
     switch(button.id){
         case 'backspace': calcScreen.value=calcScreen.value.substr(0,calcScreen.value.length-1);
             break;
@@ -35,8 +33,10 @@ function buttonPressed(button){
 
         default: calcScreen.value+=button.value;
     }
-        
+    calcScreen.focus();//moves cursor to end
 }
+
+
 // function add(a,b) {
 // 	return a+b;
 // }
