@@ -31,8 +31,7 @@
     display: grid;
     grid-template-columns: repeat(4,1fr);
     grid-template-rows: repeat(5,1fr);
-    column-gap:10px;
-    row-gap:16px;
+    gap: 10px;
     justify-content: center;
     grid-template-areas: 
         "divide into into minus"
