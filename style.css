@@ -34,7 +34,7 @@
     gap: 10px;
     justify-content: center;
     grid-template-areas: 
-        "divide into into minus"
+        "divide into minus backspace"
         "button1 button2 button3 plus"
         "button4 button5 button6 plus"
         "button7 button8 button9 equals"

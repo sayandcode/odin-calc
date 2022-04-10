@@ -14,7 +14,10 @@ buttons.addEventListener('click',buttonPressed);
 
 function buttonPressed(e){
     console.log(e.target.value);
-    calcScreen.value+=e.target.value;
+    if(e.target.id=="backspace")
+        calcScreen.value=calcScreen.value.substr(0,calcScreen.value.length-1);
+    else
+        calcScreen.value+=e.target.value;
 }
 // function add(a,b) {
 // 	return a+b;
