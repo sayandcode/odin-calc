@@ -31,11 +31,14 @@ function buttonPressed(button){
         case 'divide': insert('\u00F7');
             break;
 
-        case 'equals': calculate();
+        case 'equals': insert('=');
             break;
 
         default: insert(button.value);
     }
+    if((calcScreen.value.match(/[\+\u2212\u00D7\u00F7=]/g)||[]).length>1)//more than one operator
+        simplifyCalc();
+
 }
 
 function insert(letter){
@@ -51,18 +54,39 @@ function repositionCursor(e){
     cursorPos=calcScreen.selectionStart;
 }
 
-// function add(a,b) {
-// 	return a+b;
-// }
+function simplifyCalc(){
+    const stringInput=calcScreen.value;
+    let num=stringInput.substr(0,stringInput.length-1).split(/[\+\u2212\u00D7\u00F7]/);
+    num=num.map(Number);
+    const operator=stringInput[stringInput.search(/[\+\u2212\u00D7\u00F7]/)];
+    let result=operate(num[0],operator,num[1]);
+    calcScreen.value=result+(stringInput.substr(-1)=='='? '' : stringInput.substr(-1));
+}
 
-// function subtract(a,b) {
-// 	return a-b;
-// }
+function operate(a,operator,b){
+    switch(operator){
+        case '+': return add(a,b);
+        
+        case '\u2212': return subtract(a,b);
+        
+        case '\u00D7': return multiply([a,b]);
+        
+        case '\u00F7': return divide(a,b);   
+    }
+}
 
-// function multiply(array) {
-//   return array.reduce((tally,curr)=>tally*curr);
-// }
+function add(a,b) {
+	return a+b;
+}
 
-// function divide(a,b) {
-// 	return a/b;
-// }
+function subtract(a,b) {
+	return a-b;
+}
+
+function multiply(array) {
+  return array.reduce((tally,curr)=>tally*curr);
+}
+
+function divide(a,b) {
+	return a/b;
+}
