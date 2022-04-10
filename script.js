@@ -11,9 +11,9 @@ function checkValidInput(e){
 
 const buttons=document.querySelector('.buttons');
 buttons.addEventListener('click',e=>buttonPressed(e.target));
+calcScreen.addEventListener('click',repositionCursor);
 
 let cursorPos=0;
-let valueReplaced=false;
 
 function buttonPressed(button){
     switch(button.id){
@@ -39,30 +39,16 @@ function buttonPressed(button){
 }
 
 function insert(letter){
-    if(valueReplaced){
-        calcScreen.selectionStart=cursorPos;
-        calcScreen.selectionEnd=cursorPos;
-    }
-
-    if (calcScreen.selectionStart==calcScreen.value.length){//if the cursor at the end
-        calcScreen.value+=letter;
-        cursorPos++;
-    }
-
-    else{
-        cursorPos=calcScreen.selectionStart+1;
-        let ourText=calcScreen.value;
-        ourText=ourText.split('');
-        ourText.splice(calcScreen.selectionStart,0,letter)
-        ourText=ourText.join('');
-        calcScreen.value=ourText;
-        valueReplaced=true;
-    }
+    let ourText=calcScreen.value;
+    ourText=ourText.split('');
+    ourText.splice(cursorPos,0,letter)
+    ourText=ourText.join('');
+    calcScreen.value=ourText;
+    cursorPos++;
 }
 
 function repositionCursor(e){
-    calcScreen.selectionStart = e.detail.newPos;
-    calcScreen.selectionEnd = e.detail.newPos;
+    cursorPos=calcScreen.selectionStart;
 }
 
 // function add(a,b) {
