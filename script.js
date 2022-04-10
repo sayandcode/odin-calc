@@ -12,6 +12,9 @@ function checkValidInput(e){
 const buttons=document.querySelector('.buttons');
 buttons.addEventListener('click',e=>buttonPressed(e.target));
 
+let cursorPos=0;
+let valueReplaced=false;
+
 function buttonPressed(button){
     switch(button.id){
         case 'backspace': calcScreen.value=calcScreen.value.substr(0,calcScreen.value.length-1);
@@ -19,23 +22,48 @@ function buttonPressed(button){
 
         case "": break; //remove clicks on calc body
 
-        case 'minus': calcScreen.value+='\u2212';
+        case 'minus': insert('\u2212');
             break;
 
-        case 'into': calcScreen.value+='\u00D7';
+        case 'into': insert('\u00D7');
             break;
 
-        case 'divide': calcScreen.value+='\u00F7';
+        case 'divide': insert('\u00F7');
             break;
 
         case 'equals': calculate();
             break;
 
-        default: calcScreen.value+=button.value;
+        default: insert(button.value);
     }
-    calcScreen.focus();//moves cursor to end
 }
 
+function insert(letter){
+    if(valueReplaced){
+        calcScreen.selectionStart=cursorPos;
+        calcScreen.selectionEnd=cursorPos;
+    }
+
+    if (calcScreen.selectionStart==calcScreen.value.length){//if the cursor at the end
+        calcScreen.value+=letter;
+        cursorPos++;
+    }
+
+    else{
+        cursorPos=calcScreen.selectionStart+1;
+        let ourText=calcScreen.value;
+        ourText=ourText.split('');
+        ourText.splice(calcScreen.selectionStart,0,letter)
+        ourText=ourText.join('');
+        calcScreen.value=ourText;
+        valueReplaced=true;
+    }
+}
+
+function repositionCursor(e){
+    calcScreen.selectionStart = e.detail.newPos;
+    calcScreen.selectionEnd = e.detail.newPos;
+}
 
 // function add(a,b) {
 // 	return a+b;
