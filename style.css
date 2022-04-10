@@ -1,8 +1,5 @@
-*{
-    box-sizing: border-box;
-}
-
 .container{
+    padding-top: 20px;
     display: flex;
     flex-direction: column;
     justify-content: top;
@@ -10,9 +7,11 @@
 }
 
 .calcBody{
+    box-sizing: border-box;
     background-color: grey;
     height: 500px;
     border-radius: 25px;
+    border:4px solid black;
     display: grid;
     grid-template-columns: 300px;
     grid-template-rows: 1fr 3fr;
@@ -31,13 +30,70 @@
 .buttons{
     display: grid;
     grid-template-columns: repeat(4,1fr);
-    grid-template-rows: repeat(4,1fr);
+    grid-template-rows: repeat(5,1fr);
     column-gap:10px;
     row-gap:16px;
+    justify-content: center;
+    grid-template-areas: 
+        "divide into into minus"
+        "button1 button2 button3 plus"
+        "button4 button5 button6 plus"
+        "button7 button8 button9 equals"
+        "button0 button0 point equals "
 }
 
 .buttons button{
     border-radius: 10px;
-    border-width: 2.5px;
+    border-width: 3.5px;
     font-size: 2rem;
 }
+
+#button1{
+    grid-area: button1;
+}
+#button2{
+    grid-area: button2;
+}
+#button3{
+    grid-area: button3;
+}
+#button4{
+    grid-area: button4;
+}
+#button5{
+    grid-area: button5;
+}
+#button6{
+    grid-area: button6;
+}
+#button7{
+    grid-area: button7;
+}
+#button8{
+    grid-area: button8;
+}
+#button9{
+    grid-area: button9;
+}
+#button0{
+    grid-area: button0;
+}
+#point{
+    grid-area: point;
+}
+#plus{
+    grid-area: plus;
+}
+#minus{
+    grid-area: minus;
+}
+#into{
+    grid-area: into;
+}
+#divide{
+    grid-area: divide;
+}
+#equals{
+    grid-area: equals;
+}
+
