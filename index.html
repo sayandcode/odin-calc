@@ -6,11 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calculator</title>
     <link rel="stylesheet" href="./style.css">
+    <script src="./script.js" defer></script>
 </head>
 <body>
     <div class="container">
         <div class="calcBody">
-            <div class="screen"></div>
+            <input class="screen" value="0" pattern="/[\u2212\u00D7\u00F7\u002B\d]/g"></input>
             <div class="buttons">
                 <button id="1">1</button>
                 <button id="2">2</button>
