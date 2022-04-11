@@ -31,14 +31,27 @@ function buttonPressed(button){
         case 'divide': insert('\u00F7');
             break;
 
-        case 'equals': insert('=');
+        case 'equals': calcScreen.value+='=';   //equals always evaluates the current expression
             break;
 
         default: insert(button.value);
     }
-    if((calcScreen.value.match(/[\+\u2212\u00D7\u00F7=]/g)||[]).length>1)//more than one operator
-        simplifyCalc();
+    if(calcScreen.value.match(/([\+\u2212\u00D7\u00F7=].*){2,}/g)){     //more than one operator
+        let finalOutput='';
+        if(/\d/.test(calcScreen.value.substr(-1))){    //if the operator is in the middle somewhere
+            //recursively simplify the contents
+            let [num,operators]=splitOperators(calcScreen.value);
+            let firstPart=num[0]+operators[0]+num[1]+'=';
+            firstPart=simplifyCalc(firstPart);
+            let secondPart=operators[1]+num[2]+'=';
+            finalOutput=simplifyCalc(firstPart+secondPart);
 
+        } 
+        else
+            finalOutput= simplifyCalc(calcScreen.value);
+        calcScreen.value=finalOutput;
+    }  
+       
 }
 
 function insert(letter){
@@ -54,13 +67,22 @@ function repositionCursor(e){
     cursorPos=calcScreen.selectionStart;
 }
 
-function simplifyCalc(){
-    const stringInput=calcScreen.value;
-    let num=stringInput.substr(0,stringInput.length-1).split(/[\+\u2212\u00D7\u00F7]/);
+function simplifyCalc(str){
+    let [num,operators]=splitOperators(str);
     num=num.map(Number);
-    const operator=stringInput[stringInput.search(/[\+\u2212\u00D7\u00F7]/)];
-    let result=operate(num[0],operator,num[1]);
-    calcScreen.value=result+(stringInput.substr(-1)=='='? '' : stringInput.substr(-1));
+    const result=operate(num[0],operators[0],num[1]);
+    return result+( operators[1]=='=' ? '' : operators[1]);
+}
+
+function splitOperators(str){
+    const num=str.split(/[\+\u2212\u00D7\u00F7=]/);
+    const operators=str.match(/[\+\u2212\u00D7\u00F7=]/g);
+    return [num, operators]
+}
+
+function findNth(str,subStr,count){
+    return str.split(subStr, count).join(subStr).length;
+
 }
 
 function operate(a,operator,b){
@@ -74,6 +96,11 @@ function operate(a,operator,b){
         case '\u00F7': return divide(a,b);   
     }
 }
+
+
+
+
+//Math functions
 
 function add(a,b) {
 	return a+b;
