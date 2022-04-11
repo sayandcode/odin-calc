@@ -17,7 +17,7 @@ let cursorPos=0;    //starting conditions
 let prevButtonID=''; //
 
 function buttonPressed(button){
-    if((/(plus|minus|into|divide)/.test(prevButtonID))&&(/(plus|minus|into|divide)/.test(button.id))){  //if second consecutive operator, just remove the previous operator
+    if((/(plus|minus|into|divide|point)/.test(prevButtonID))&&(/(plus|minus|into|divide)/.test(button.id))){  //if second consecutive operator, just remove the previous operator
         const back=document.createElement('button');
         back.setAttribute('id','backspace')
         prevButtonID='';
@@ -98,19 +98,20 @@ function splitOperators(str){
     return [num, operators]
 }
 
-function findNth(str,subStr,count){
-    return str.split(subStr, count).join(subStr).length;
-
-}
-
 function operate(a,operator,b){
+    let result;
     switch(operator){
-        case '+': return a+b;
-        Z
-        case '\u2212': return a-b;
+        case '+': result= a+b;
+            break;
         
-        case '\u00D7': return a*b;
+        case '\u2212': result= a-b;
+            break;
         
-        case '\u00F7': return a/b;
+        case '\u00D7': result= a*b;
+            break;
+        
+        case '\u00F7': result= a/b;
+            break;
     }
+    return Number(Math.round(result+"e+4")+"e-4");
 }
