@@ -1,18 +1,39 @@
 const calcScreen = document.querySelector('.screen');
-calcScreen.addEventListener('keydown',checkValidInput); //check for clicks anywhere on the body
+calcScreen.addEventListener('keydown',checkValidInput);
 
 const buttons=document.querySelector('.buttons');
-buttons.addEventListener('click',e=>buttonPressed(e.target));
+buttons.addEventListener('click',e=>buttonPressed(e.target)); //check for clicks anywhere on the body
 calcScreen.addEventListener('click',repositionCursor);
 
 /*______________________ Input control START ______________________*/
 
 function checkValidInput(e){
-	if(e.ctrlKey||e.altKey||typeof e.key!=='string'||e.key.length!==1) //if special buttons, let it pass
+    cursorPos=calcScreen.selectionStart;
+	if(e.ctrlKey||e.altKey||typeof e.key!=='string'||e.key=='Backspace') //if special buttons, let it pass
         return;
+    
+    switch(e.key){
+        case '-':
+            simulatePress('minus');
+            break;
+    
+        case '*':
+            simulatePress('into');
+            break;
+    
+        case '/':
+            simulatePress('divide');
+            break;
 
+        case 'Enter':simulatePress('equals');
+            break;
+
+        case ' ':simulatePress('equals');
+            break;
+    }
     if(!(/[\d\+\u2212\u00D7\u00F7]/.test(e.key)))
         e.preventDefault(); //filter out invalid input
+    prevButtonID=e.id;  
 }
 
 let cursorPos=0;    //starting conditions
@@ -21,11 +42,8 @@ let pointFirstPress=true;
 
 function buttonPressed(button){
     if((/(plus|minus|into|divide|point)/.test(prevButtonID))&&(/(plus|minus|into|divide)/.test(button.id))){  //if second consecutive operator, just remove the previous operator
-        const back=document.createElement('button');
-        back.setAttribute('id','backspace')
+        simulatePress('backspace');
         prevButtonID='';
-        buttonPressed(back);
-        back.remove();
     }  
 
     switch(button.id){
@@ -82,6 +100,13 @@ function buttonPressed(button){
         calcScreen.value=finalOutput;
     }  
     prevButtonID=button.id;  
+}
+
+function simulatePress(buttonID){   //creates a fake button and passes it to buttonPressed
+    const tempButton=document.createElement('button');
+    tempButton.setAttribute('id',buttonID)   
+    buttonPressed(tempButton);
+    tempButton.remove();
 }
 
 function insert(letter){
