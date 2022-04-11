@@ -13,14 +13,19 @@ const buttons=document.querySelector('.buttons');
 buttons.addEventListener('click',e=>buttonPressed(e.target));
 calcScreen.addEventListener('click',repositionCursor);
 
-let cursorPos=0;
+let cursorPos=0;    //starting conditions
+let prevButton=''; //
 
 function buttonPressed(button){
+
     switch(button.id){
         case 'backspace': calcScreen.value=calcScreen.value.substr(0,calcScreen.value.length-1);
             break;
 
         case "": break; //remove clicks on calc body
+
+        case 'plus': insert('+');
+            break;
 
         case 'minus': insert('\u2212');
             break;
@@ -31,10 +36,18 @@ function buttonPressed(button){
         case 'divide': insert('\u00F7');
             break;
 
-        case 'equals': calcScreen.value+='=';   //equals always evaluates the current expression
+        case 'equals': 
+            if(calcScreen.value.search(/[\+\u2212\u00D7\u00F7]/g) !== -1)    //if its not the only operator on screen
+                calcScreen.value+='=';  //add to the end so that it can get evaluated
             break;
+              
+           
 
-        default: insert(button.value);
+        default: //number or decimal point
+            if(prevButton.id=='equals'){   //if result of previous calc is on screen
+                calcScreen.value='';
+            }
+            insert(button.value);
     }
     if(calcScreen.value.match(/([\+\u2212\u00D7\u00F7=].*){2,}/g)){     //more than one operator
         let finalOutput='';
@@ -51,7 +64,7 @@ function buttonPressed(button){
             finalOutput= simplifyCalc(calcScreen.value);
         calcScreen.value=finalOutput;
     }  
-       
+    prevButton=button.id;  
 }
 
 function insert(letter){
