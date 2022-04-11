@@ -14,9 +14,16 @@ buttons.addEventListener('click',e=>buttonPressed(e.target));
 calcScreen.addEventListener('click',repositionCursor);
 
 let cursorPos=0;    //starting conditions
-let prevButton=''; //
+let prevButtonID=''; //
 
 function buttonPressed(button){
+    if((/(plus|minus|into|divide)/.test(prevButtonID))&&(/(plus|minus|into|divide)/.test(button.id))){  //if second consecutive operator, just remove the previous operator
+        const back=document.createElement('button');
+        back.setAttribute('id','backspace')
+        prevButtonID='';
+        buttonPressed(back);
+        back.remove();
+    }  
 
     switch(button.id){
         case 'backspace': calcScreen.value=calcScreen.value.substr(0,calcScreen.value.length-1);
@@ -40,11 +47,9 @@ function buttonPressed(button){
             if(calcScreen.value.search(/[\+\u2212\u00D7\u00F7]/g) !== -1)    //if its not the only operator on screen
                 calcScreen.value+='=';  //add to the end so that it can get evaluated
             break;
-              
-           
 
         default: //number or decimal point
-            if(prevButton.id=='equals'){   //if result of previous calc is on screen
+            if(prevButtonID=='equals'){   //if result of previous calc is on screen
                 calcScreen.value='';
             }
             insert(button.value);
@@ -64,7 +69,7 @@ function buttonPressed(button){
             finalOutput= simplifyCalc(calcScreen.value);
         calcScreen.value=finalOutput;
     }  
-    prevButton=button.id;  
+    prevButtonID=button.id;  
 }
 
 function insert(letter){
@@ -100,33 +105,12 @@ function findNth(str,subStr,count){
 
 function operate(a,operator,b){
     switch(operator){
-        case '+': return add(a,b);
+        case '+': return a+b;
+        Z
+        case '\u2212': return a-b;
         
-        case '\u2212': return subtract(a,b);
+        case '\u00D7': return a*b;
         
-        case '\u00D7': return multiply([a,b]);
-        
-        case '\u00F7': return divide(a,b);   
+        case '\u00F7': return a/b;
     }
-}
-
-
-
-
-//Math functions
-
-function add(a,b) {
-	return a+b;
-}
-
-function subtract(a,b) {
-	return a-b;
-}
-
-function multiply(array) {
-  return array.reduce((tally,curr)=>tally*curr);
-}
-
-function divide(a,b) {
-	return a/b;
 }
