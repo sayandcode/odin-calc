@@ -44,7 +44,7 @@ function buttonPressed(button){
             break;
 
         case 'equals': 
-            if(calcScreen.value.search(/[\+\u2212\u00D7\u00F7]/g) !== -1)    //if its not the only operator on screen
+            if(calcScreen.value.search(/[\+\u2212\u00D7\u00F7]/g) !== -1)    //add '=' only if theres some operation to be done, otherwise just display whatevers there
                 calcScreen.value+='=';  //add to the end so that it can get evaluated
             break;
 
@@ -56,7 +56,7 @@ function buttonPressed(button){
     }
     if(calcScreen.value.match(/([\+\u2212\u00D7\u00F7=].*){2,}/g)){     //more than one operator
         let finalOutput='';
-        if(/\d/.test(calcScreen.value.substr(-1))){    //if the operator is in the middle somewhere
+        if(/\d/.test(calcScreen.value.substr(-1))){    //if the last operator is in the middle somewhere
             //recursively simplify the contents
             let [num,operators]=splitOperators(calcScreen.value);
             let firstPart=num[0]+operators[0]+num[1]+'=';
@@ -86,10 +86,14 @@ function repositionCursor(e){
 }
 
 function simplifyCalc(str){
-    let [num,operators]=splitOperators(str);
+    let [num,operator]=splitOperators(str);
     num=num.map(Number);
-    const result=operate(num[0],operators[0],num[1]);
-    return result+( operators[1]=='=' ? '' : operators[1]);
+    if((operator[0]=='\u00F7')&&(num[1]==0)){
+        alert("Can't divide by zero");
+        return num[0]+operator[0]+num[1];
+    }
+    const result=operate(num[0],operator[0],num[1]);
+    return result+( operator[1]=='=' ? '' : operator[1]);
 }
 
 function splitOperators(str){
