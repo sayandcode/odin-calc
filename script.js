@@ -1,6 +1,12 @@
 const calcScreen = document.querySelector('.screen');
 calcScreen.addEventListener('keydown',checkValidInput); //check for clicks anywhere on the body
 
+const buttons=document.querySelector('.buttons');
+buttons.addEventListener('click',e=>buttonPressed(e.target));
+calcScreen.addEventListener('click',repositionCursor);
+
+/*______________________ Input control START ______________________*/
+
 function checkValidInput(e){
 	if(e.ctrlKey||e.altKey||typeof e.key!=='string'||e.key.length!==1) //if special buttons, let it pass
         return;
@@ -9,12 +15,9 @@ function checkValidInput(e){
         e.preventDefault(); //filter out invalid input
 }
 
-const buttons=document.querySelector('.buttons');
-buttons.addEventListener('click',e=>buttonPressed(e.target));
-calcScreen.addEventListener('click',repositionCursor);
-
 let cursorPos=0;    //starting conditions
 let prevButtonID=''; //
+let pointFirstPress=true;
 
 function buttonPressed(button){
     if((/(plus|minus|into|divide|point)/.test(prevButtonID))&&(/(plus|minus|into|divide)/.test(button.id))){  //if second consecutive operator, just remove the previous operator
@@ -32,26 +35,35 @@ function buttonPressed(button){
         case "": break; //remove clicks on calc body
 
         case 'plus': insert('+');
+            document.querySelector('#point').disabled=false;
             break;
 
         case 'minus': insert('\u2212');
+            document.querySelector('#point').disabled=false;
             break;
 
         case 'into': insert('\u00D7');
+            document.querySelector('#point').disabled=false;
             break;
 
         case 'divide': insert('\u00F7');
+            document.querySelector('#point').disabled=false;
             break;
 
         case 'equals': 
-            if(calcScreen.value.search(/[\+\u2212\u00D7\u00F7]/g) !== -1)    //add '=' only if theres some operation to be done, otherwise just display whatevers there
+            if(calcScreen.value.search(/[\+\u2212\u00D7\u00F7]/g) !== -1){  //add '=' only if theres some operation to be done, otherwise just display whatevers there
                 calcScreen.value+='=';  //add to the end so that it can get evaluated
+                document.querySelector('#point').disabled=false;
+            }    
             break;
 
         default: //number or decimal point
             if(prevButtonID=='equals'){   //if result of previous calc is on screen
                 calcScreen.value='';
             }
+            if(button.id=='point'){     //deactivate while current operand contains a decimal point
+                document.querySelector('#point').disabled=true;
+            }    
             insert(button.value);
     }
     if(calcScreen.value.match(/([\+\u2212\u00D7\u00F7=].*){2,}/g)){     //more than one operator
@@ -84,6 +96,9 @@ function insert(letter){
 function repositionCursor(e){
     cursorPos=calcScreen.selectionStart;
 }
+
+/*______________________ Input Control END ______________________*/
+/*______________________ Calculations logic START ______________________*/
 
 function simplifyCalc(str){
     let [num,operator]=splitOperators(str);
@@ -119,3 +134,5 @@ function operate(a,operator,b){
     }
     return Number(Math.round(result+"e+4")+"e-4");
 }
+
+/*______________________ Calculations logic END ______________________*/
