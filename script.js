@@ -6,13 +6,16 @@ buttons.addEventListener('click',e=>buttonPressed(e.target)); //check for clicks
 calcScreen.addEventListener('click',repositionCursor);
 
 /*______________________ Input control START ______________________*/
+let cursorPos=0;    //starting conditions
+let prevButtonID=''; //
 
 function checkValidInput(e){
-    cursorPos=calcScreen.selectionStart;
-	if(e.ctrlKey||e.altKey||typeof e.key!=='string'||e.key=='Backspace') //if special buttons, let it pass
-        return;
-    
+    cursorPos=calcScreen.selectionStart; 
     switch(e.key){
+        case '+':
+            simulatePress('plus');
+            break;
+
         case '-':
             simulatePress('minus');
             break;
@@ -24,26 +27,41 @@ function checkValidInput(e){
         case '/':
             simulatePress('divide');
             break;
+        
+        case '.':
+            if(document.querySelector('#point').disabled==false)
+                simulatePress('point');
+            else{
+                e.preventDefault();
+                return;                
+            }
+            break;  
 
         case 'Enter':simulatePress('equals');
             break;
 
         case ' ':simulatePress('equals');
             break;
-    }
-    if(!(/[\d\+\u2212\u00D7\u00F7]/.test(e.key)))
-        e.preventDefault(); //filter out invalid input
-    prevButtonID=e.id;  
-}
 
-let cursorPos=0;    //starting conditions
-let prevButtonID=''; //
-let pointFirstPress=true;
+    }
+    
+    if(e.ctrlKey||e.altKey||typeof e.key!=='string'||e.key.length!==1) //if special buttons, let it pass
+        return;
+    else if(/\d/.test(e.key)){  //allow digits
+        prevButtonID='button'+e.key;       
+        cursorPos++; 
+    }
+    else{    //everything else blocked
+        e.preventDefault(); 
+        return;    
+    }
+      
+}
 
 function buttonPressed(button){
     if((/(plus|minus|into|divide|point)/.test(prevButtonID))&&(/(plus|minus|into|divide)/.test(button.id))){  //if second consecutive operator, just remove the previous operator
         simulatePress('backspace');
-        prevButtonID='';
+        // prevButtonID='';
     }  
 
     switch(button.id){
@@ -75,15 +93,19 @@ function buttonPressed(button){
             }    
             break;
 
+        case 'point':   //deactivate while current operand contains a decimal point
+            document.querySelector('#point').disabled=true;
+            insert('.');
+            break;
+        
         default: //number or decimal point
             if(prevButtonID=='equals'){   //if result of previous calc is on screen
                 calcScreen.value='';
             }
-            if(button.id=='point'){     //deactivate while current operand contains a decimal point
-                document.querySelector('#point').disabled=true;
-            }    
             insert(button.value);
     }
+    
+    //and check if simplification is necessary
     if(calcScreen.value.match(/([\+\u2212\u00D7\u00F7=].*){2,}/g)){     //more than one operator
         let finalOutput='';
         if(/\d/.test(calcScreen.value.substr(-1))){    //if the last operator is in the middle somewhere
