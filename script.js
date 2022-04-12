@@ -1,15 +1,20 @@
 const calcScreen = document.querySelector('.screen');
-calcScreen.addEventListener('keydown',checkValidInput);
+document.addEventListener('keydown',checkValidInput);
 
 const buttons=document.querySelector('.buttons');
 buttons.addEventListener('click',e=>buttonPressed(e.target)); //check for clicks anywhere on the body
 calcScreen.addEventListener('click',repositionCursor);
 
 /*______________________ Input control START ______________________*/
+// −:\u2212
+// ×:\u00D7
+// ÷:\u00F7
+
 let cursorPos=0;    //starting conditions
 let prevButtonID=''; //
 
 function checkValidInput(e){
+    calcScreen.focus();
     cursorPos=calcScreen.selectionStart; 
     switch(e.key){
         case '+':
@@ -59,13 +64,15 @@ function checkValidInput(e){
 }
 
 function buttonPressed(button){
-    if((/(plus|minus|into|divide|point)/.test(prevButtonID))&&(/(plus|minus|into|divide)/.test(button.id))){  //if second consecutive operator, just remove the previous operator
+    if((/[\+\u2212\u00D7\u00F7\.]/.test(calcScreen.value[cursorPos-1]))&&(/(plus|minus|into|divide)/.test(button.id))){  //if second consecutive operator, just remove the previous operator
         simulatePress('backspace');
-        // prevButtonID='';
     }  
 
     switch(button.id){
-        case 'backspace': calcScreen.value=calcScreen.value.substr(0,calcScreen.value.length-1);
+        case 'backspace': 
+            calcScreen.value= calcScreen.value.substring(0,cursorPos-1)+calcScreen.value.substring(cursorPos);
+            cursorPos--;
+            [selectionStart,selectionEnd]=[cursorPos,cursorPos];
             break;
 
         case "": break; //remove clicks on calc body
